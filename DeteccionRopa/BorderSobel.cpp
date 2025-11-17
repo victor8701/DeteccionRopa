@@ -21,7 +21,6 @@ Mat imageEdited;
 
 string imageName = " ";
 char* imageChar;
-int imageColor = -1;
 
 void ChargeImage()
 {
