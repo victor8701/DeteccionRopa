@@ -17,6 +17,7 @@ Mat imageGray;
 Mat imageEdited;
 
 string imageName = " ";
+char* imageChar;
  
 void ChargeImage()
 {
@@ -24,6 +25,12 @@ void ChargeImage()
     cin >> imageName;
     // Nombre de la imagen que se va a cargar
     string path = IMAGEN + imageName + ".jpg";
+
+    //{ para cargar la ruta de la imagen (necesitamos char* en vez de string)
+    vector<char> imageChar(path.begin(), path.end());
+    imageChar.push_back('\0');
+    char* cstr = imageChar.data();
+    //}
 
     // Se carga la imagen desde disco y se comprueba que lo ha hecho correctamente
     //imagen = imread(path);
