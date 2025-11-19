@@ -10,7 +10,11 @@
 using namespace std;
 using namespace cv;
 
-#define IMAGEN "C:\\AAAA\\OpenCV\\images\\"
+#ifdef _WIN32
+	#define IMAGEN "C:\\AAAA\\OpenCV\\images\\"
+#else
+    #define IMAGEN "images/"
+#endif
 
 Mat imagen;
 Mat imageGray;
@@ -52,7 +56,7 @@ void ChargeImage()
     BorderSobel();
     Mat imagenSobel = imageEdited.clone();
 
-    // 2. Detectamos esquinas bas·ndonos en el Sobel y ordenamos
+    // 2. Detectamos esquinas bas√°ndonos en el Sobel y ordenamos
     DetectarEsquinasCaja();
 
     Mat imagenSobelColor;
@@ -72,10 +76,10 @@ void BorderSobel()
 {
     Mat grad_x, grad_y;
     Mat abs_grad_x, abs_grad_y;
-    // Gradiente en la direcciÛn X
+    // Gradiente en la direcci√≥n X
     Sobel(imageGray, grad_x, CV_16S, 1, 0, 3);
     convertScaleAbs(grad_x, abs_grad_x);
-    // Gradiente en la direcciÛn Y
+    // Gradiente en la direcci√≥n Y
     Sobel(imageGray, grad_y, CV_16S, 0, 1, 3);
     convertScaleAbs(grad_y, abs_grad_y);
     // Combina ambos gradientes
@@ -85,37 +89,37 @@ void BorderSobel()
 // Detecta esquinas y las imprime con origen (0,0) en inferior-izquierda
 void DetectarEsquinasCaja()
 {
-    // 1. Par·metros de detecciÛn
-    int maxCorners = 20;        // M·ximo n˙mero de esquinas a encontrar (caja + separadores)
-    double qualityLevel = 0.1; 	// Calidad mÌnima de la esquina (est·ndar)
-    double minDistance = 50;    // Distancia mÌnima en pÌxeles entre esquinas (para evitar duplicados muy cerca)
+    // 1. Par√°metros de detecci√≥n
+    int maxCorners = 20;        // M√°ximo n√∫mero de esquinas a encontrar (caja + separadores)
+    double qualityLevel = 0.1; 	// Calidad m√≠nima de la esquina (est√°ndar)
+    double minDistance = 50;    // Distancia m√≠nima en p√≠xeles entre esquinas (para evitar duplicados muy cerca)
 
     vector<Point2f> corners;
 
-    // 2. DetecciÛn sobre el resultado de Sobel
+    // 2. Detecci√≥n sobre el resultado de Sobel
     // En este punto, 'imageEdited' contiene la imagen con el filtro Sobel aplicado.
-    // Al detectar sobre Sobel, se encuentran muy bien las intersecciones de lÌneas.
+    // Al detectar sobre Sobel, se encuentran muy bien las intersecciones de l√≠neas.
     goodFeaturesToTrack(imageEdited, corners, maxCorners, qualityLevel, minDistance, Mat(), 3, false, 0.04);
 
     // 3. Ordenar las esquinas respecto al origen (0,0) INFERIOR IZQUIERDA
-    // Obtenemos la altura para la transformaciÛn matem·tica
+    // Obtenemos la altura para la transformaci√≥n matem√°tica
     float alturaImagen = (float)imagen.rows;
 
-    // Usamos una funciÛn lambda para ordenar el vector
+    // Usamos una funci√≥n lambda para ordenar el vector
     sort(corners.begin(), corners.end(), [alturaImagen](Point2f a, Point2f b) {
         // Transformar coordenadas Y (OpenCV arriba -> Abajo real)
         float ay = alturaImagen - a.y;
         float by = alturaImagen - b.y;
         
-        // Distancia al cuadrado desde (0,0) = x^2 + y^2 (Pit·goras)
-        // No hace falta la raÌz cuadrada para comparar quien es mayor
+        // Distancia al cuadrado desde (0,0) = x^2 + y^2 (Pit√°goras)
+        // No hace falta la ra√≠z cuadrada para comparar quien es mayor
         float distA = (a.x * a.x) + (ay * ay);
         float distB = (b.x * b.x) + (by * by);
 
-        return distA < distB; // Orden ascendente (el m·s cercano primero)
+        return distA < distB; // Orden ascendente (el m√°s cercano primero)
     });
 
-    // 4. VisualizaciÛn
+    // 4. Visualizaci√≥n
     // Volvemos a copiar la imagen original a color en imageEdited para 
     // pintar los resultados sobre la foto real y que se vea bonito.
     imageEdited = imagen.clone(); 
@@ -130,10 +134,10 @@ void DetectarEsquinasCaja()
 
         cout << "Punto " << i + 1 << ": (" << x_real << ", " << y_real << ")" << endl;
 
-        // Dibujar: CÌrculo rojo lleno
+        // Dibujar: C√≠rculo rojo lleno
         circle(imageEdited, corners[i], 5, Scalar(0, 0, 255), -1);
         
-        // Escribir el n˙mero de orden en la imagen
+        // Escribir el n√∫mero de orden en la imagen
         putText(imageEdited, to_string((int)i + 1), corners[i] + Point2f(5, -5), 
                 FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 255, 0), 1);
     }
