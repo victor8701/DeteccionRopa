@@ -1,5 +1,5 @@
 # DeteccionRopa
 
 Para correr desde VSCode (terminal linux)
-- src/DeteccionRopa/build
+- cd src/DeteccionRopa/build
 - ./DeteccionRopa
