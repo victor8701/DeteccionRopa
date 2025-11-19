@@ -1,0 +1,3 @@
+/home/ubuntu20/Ubuntu20_ws/src/DeteccionRopa/build/CMakeFiles/rebuild_cache.dir
+/home/ubuntu20/Ubuntu20_ws/src/DeteccionRopa/build/CMakeFiles/edit_cache.dir
+/home/ubuntu20/Ubuntu20_ws/src/DeteccionRopa/build/CMakeFiles/DeteccionRopa.dir
