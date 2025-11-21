@@ -3,12 +3,7 @@ import numpy as np
 import sys
 import os
 
-# Definición de rutas similar al #ifdef _WIN32 del C++
-if sys.platform == 'win32':
-    # Nota: Asegúrate de que esta ruta exista o cámbiala a tu carpeta local
-    BASE_PATH = "C:\\AAAA\\OpenCV\\images\\"
-else:
-    BASE_PATH = "../images/"
+BASE_PATH = "../images/"
 
 # Variables globales para mantener la estructura del C++
 # En Python no son estrictamente necesarias si pasamos argumentos, 
