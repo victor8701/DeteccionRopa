@@ -25,7 +25,13 @@ def detectar_ropa():
     model.set_classes(mis_clases)
 
     # RUTA BASE
-    carpeta_base = "/home/ubuntu20/Ubuntu20_ws/src/DeteccionRopa/images"
+
+    #Me estaba dando problemas la ruta y la IA me ha recomendado usar esto qeu define las rutas segun la ubicación de este archivo
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    carpeta_base = os.path.join(script_dir, "..", "images")
+    carpeta_base = os.path.abspath(carpeta_base)
+    #carpeta_base = "../images/"
+    #carpeta_base = "/home/ubuntu20/Ubuntu20_ws/src/DeteccionRopa/images"
     #carpeta_base = "/home/ubuntu20/Ubuntu20_ws/src/DeteccionRopa/src/Clothing_Detection_YOLO/tests"
 
     print(f"\nBuscando en: {carpeta_base}")
