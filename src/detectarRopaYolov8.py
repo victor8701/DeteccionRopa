@@ -8,17 +8,24 @@ def detectar_ropa():
     
     # Cargamos el modelo
     try:
-        model = YOLO('yolov8s-world.pt')  
+        model = YOLO('yolov8l-world.pt')  
     except Exception as e:
         print(f"Error cargando modelo: {e}")
         sys.exit(1)
 
     # Definimos qué buscar
     mis_clases = [
-        "bag", "belt", "boots", "footwear", 
-        "outer clothing", "dress", "sunglasses", 
-        "pants", "top", "shorts", "skirt", 
-        "headwear", "scarf", "tie"
+        "handbag", "belt",
+        "boots", "sneakers", "heels",
+        "jacket", "dress",
+        "sunglasses", "hat",
+        "pants", "shorts", "skirt",
+        "shirt", "t-shirt", "top", "sweater",
+        "scarf", "tie"
+        #"bag", "belt", "boots", "footwear", 
+        #"outer clothing", "dress", "sunglasses", 
+        #"pants", "top", "shorts", "skirt", 
+        #"headwear", "scarf", "tie"
     ]
     
     print(f"Configurando clases: {mis_clases}")
@@ -52,7 +59,7 @@ def detectar_ropa():
 
     # PREDICCIÓN
     # save=True guarda la imagen en disco también
-    results = model.predict(source=ruta_imagen, save=True, conf=0.15)
+    results = model.predict(source=ruta_imagen, save=True, conf=0.15, imgsz=1280, augment=True, iou=0.5)
 
     # -----------------------------------------------------------
     # PARTE NUEVA: MOSTRAR LA IMAGEN EN PANTALLA
