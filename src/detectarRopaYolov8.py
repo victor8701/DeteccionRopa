@@ -8,24 +8,37 @@ def detectar_ropa():
     
     # Cargamos el modelo
     try:
-        model = YOLO('yolov8s-world.pt')  
+        model = YOLO('yolov8l-world.pt')  
     except Exception as e:
         print(f"Error cargando modelo: {e}")
         sys.exit(1)
 
     # Definimos qué buscar
     mis_clases = [
-        "bag", "belt", "boots", "footwear", 
-        "outer clothing", "dress", "sunglasses", 
-        "pants", "top", "shorts", "skirt", 
-        "headwear", "scarf", "tie"
+        "handbag", "belt",
+        "boots", "sneakers", "heels",
+        "jacket", "dress",
+        "sunglasses", "hat",
+        "pants", "shorts", "skirt",
+        "shirt", "t-shirt", "top", "sweater",
+        "scarf", "tie"
+        #"bag", "belt", "boots", "footwear", 
+        #"outer clothing", "dress", "sunglasses", 
+        #"pants", "top", "shorts", "skirt", 
+        #"headwear", "scarf", "tie"
     ]
     
     print(f"Configurando clases: {mis_clases}")
     model.set_classes(mis_clases)
 
     # RUTA BASE
-    carpeta_base = "/home/ubuntu20/Ubuntu20_ws/src/DeteccionRopa/images"
+
+    #Me estaba dando problemas la ruta y la IA me ha recomendado usar esto qeu define las rutas segun la ubicación de este archivo
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    carpeta_base = os.path.join(script_dir, "..", "images")
+    carpeta_base = os.path.abspath(carpeta_base)
+    #carpeta_base = "../images/"
+    #carpeta_base = "/home/ubuntu20/Ubuntu20_ws/src/DeteccionRopa/images"
     #carpeta_base = "/home/ubuntu20/Ubuntu20_ws/src/DeteccionRopa/src/Clothing_Detection_YOLO/tests"
 
     print(f"\nBuscando en: {carpeta_base}")
@@ -46,7 +59,7 @@ def detectar_ropa():
 
     # PREDICCIÓN
     # save=True guarda la imagen en disco también
-    results = model.predict(source=ruta_imagen, save=True, conf=0.15)
+    results = model.predict(source=ruta_imagen, save=True, conf=0.15, imgsz=1280, augment=True, iou=0.5)
 
     # -----------------------------------------------------------
     # PARTE NUEVA: MOSTRAR LA IMAGEN EN PANTALLA
