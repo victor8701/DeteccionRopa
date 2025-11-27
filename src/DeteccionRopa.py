@@ -43,7 +43,7 @@ def obtener_mascara_carton(imagen_bgr):
     # Sat (65-255): ALTA saturación mínima para evitar grises/metales.
     # Val (60-255): Brillo medio-alto para evitar sombras oscuras.
     lower_brown = np.array([10, 65, 60]) 
-    upper_brown = np.array([30, 255, 255])
+    upper_brown = np.array([17, 255, 255]) # modificar primer valor para ser mas / menos restrictivo en cuanto a color que no es carton
     
     # Crear la máscara (255 si está en el rango, 0 si no)
     mask = cv2.inRange(hsv, lower_brown, upper_brown)
@@ -73,7 +73,7 @@ def detectar_esquinas_caja(sobel_img, original_img, mask_color):
     # 1. Parámetros de detección
     max_corners = 20
     quality_level = 0.1
-    min_distance = 70
+    min_distance = 25
     
     # 2. Detección sobre el resultado de Sobel
     # corners devuelve un array numpy de forma (N, 1, 2)
@@ -173,8 +173,16 @@ def charge_image():
     # DERECHA: Imagen Procesada (image_result)
     imagen_combinada = cv2.hconcat([imagen, image_result])
 
-    cv2.namedWindow("Izq: Original | Der: Procesada (Solo Caja)", cv2.WINDOW_AUTOSIZE)
-    cv2.imshow("Izq: Original | Der: Procesada (Solo Caja)", imagen_combinada)
+    window_name = "Izq: Original | Der: Procesada (Solo Caja)"
+    
+    # EDITADO: Usamos WINDOW_NORMAL para permitir redimensionar
+    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+    
+    # EDITADO: Movemos a la esquina (0,0) y damos un tamaño grande (ej. 1920x1080)
+    cv2.moveWindow(window_name, 0, 0)
+    cv2.resizeWindow(window_name, 1920, 1080)
+    
+    cv2.imshow(window_name, imagen_combinada)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
