@@ -30,17 +30,50 @@ def border_sobel(gray_img):
     combined = cv2.addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0)
     return combined
 
-def detectar_esquinas_caja(sobel_img, original_img):
+def obtener_mascara_carton(imagen_bgr):
     """
-    Detecta esquinas sobre la imagen Sobel, las ordena desde la 
-    esquina inferior-izquierda y dibuja sobre la imagen original.
+    Crea una máscara estricta para el color cartón,
+    eliminando grises (metal) y oscuros (fondo).
+    """
+    # Convertir a HSV
+    hsv = cv2.cvtColor(imagen_bgr, cv2.COLOR_BGR2HSV)
+    
+    # --- AJUSTE RESTRICTIVO ---
+    # Hue (10-30): Rango naranja/marrón específico.
+    # Sat (65-255): ALTA saturación mínima para evitar grises/metales.
+    # Val (60-255): Brillo medio-alto para evitar sombras oscuras.
+    lower_brown = np.array([10, 65, 60]) 
+    upper_brown = np.array([30, 255, 255])
+    
+    # Crear la máscara (255 si está en el rango, 0 si no)
+    mask = cv2.inRange(hsv, lower_brown, upper_brown)
+    
+    # --- LIMPIEZA DE RUIDO ---
+    kernel = np.ones((5, 5), np.uint8)
+    
+    # 1. Eliminar ruido blanco fuera de la caja (puntitos aislados)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=1)
+    
+    # 2. Cerrar huecos dentro de la caja
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel, iterations=1)
+    
+    # 3. EROSIÓN (Importante): Encoge la máscara ligeramente.
+    # Esto asegura que el borde detectado sea el del cartón y no el borde
+    # que toca el metal. Evita que la máscara "sangre" hacia el riel.
+    mask = cv2.erode(mask, kernel, iterations=2)
+    
+    return mask
+
+def detectar_esquinas_caja(sobel_img, original_img, mask_color):
+    """
+    Detecta esquinas y muestra solo la caja con puntos grandes.
     """
     height, width = sobel_img.shape[:2]
     
     # 1. Parámetros de detección
     max_corners = 20
     quality_level = 0.1
-    min_distance = 50
+    min_distance = 70
     
     # 2. Detección sobre el resultado de Sobel
     # corners devuelve un array numpy de forma (N, 1, 2)
@@ -51,8 +84,13 @@ def detectar_esquinas_caja(sobel_img, original_img):
         minDistance=min_distance,
         blockSize=3, 
         useHarrisDetector=False, 
-        k=0.04
+        k=0.04,
+        mask=mask_color  # Solo busca donde la máscara es blanca
     )
+
+    # CREAR VISUALIZACIÓN: FONDO NEGRO
+    # Usamos bitwise_and para que solo se vean los píxeles de la caja
+    output_img = cv2.bitwise_and(original_img, original_img, mask=mask_color)
 
     if corners is not None:
         # Convertimos a lista para poder ordenar fácilmente
@@ -63,11 +101,7 @@ def detectar_esquinas_caja(sobel_img, original_img):
         # c[0][0] es X, c[0][1] es Y
         corners_list.sort(key=lambda c: (c[0][0]**2) + (height - c[0][1])**2)
 
-        # 4. Visualización
-        # Copiamos la imagen original para pintar resultados
-        output_img = original_img.copy()
-
-        print("--- ESQUINAS ORDENADAS (Desde Inferior-Izquierda) ---")
+        print("--- ESQUINAS ORDENADAS (Filtradas por color cartón) ---")
         
         for i, corner in enumerate(corners_list):
             x, y = corner.ravel() # aplanar array a (x, y)
@@ -78,19 +112,21 @@ def detectar_esquinas_caja(sobel_img, original_img):
             
             print(f"Punto {i + 1}: ({x_real:.2f}, {y_real:.2f})")
             
-            # Dibujar círculo rojo
+            # Dibujar círculo rojo GRANDE (Radio 12)
             center = (int(x), int(y))
-            cv2.circle(output_img, center, 5, (0, 0, 255), -1)
             
-            # Escribir número
-            cv2.putText(output_img, str(i + 1), (int(x) + 5, int(y) - 5),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
+            # Radio aumentado a 12 (antes era 5)
+            cv2.circle(output_img, center, 12, (0, 0, 255), -1)
+            
+            # Texto un poco más grueso y desplazado
+            cv2.putText(output_img, str(i + 1), (int(x) + 15, int(y) - 15),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
         
         print("-" * 52)
         return output_img
     else:
-        print("No se encontraron esquinas.")
-        return original_img.copy()
+        print("No se encontraron esquinas en el área del color especificado.")
+        return output_img
 
 def charge_image():
     global imagen, imageGray, imageEdited
@@ -127,17 +163,18 @@ def charge_image():
 
     # 2. Detectamos esquinas y ordenamos
     # Pasamos la imagen sobel para detectar y la original para pintar
-    image_result = detectar_esquinas_caja(imagen_sobel, imagen)
+    mascara_carton = obtener_mascara_carton(imagen)
 
-    # Convertimos Sobel a BGR para poder concatenar con la imagen a color
-    imagen_sobel_color = cv2.cvtColor(imagen_sobel, cv2.COLOR_GRAY2BGR)
+    # 3. Detectamos esquinas y generamos la imagen procesada (Caja sobre fondo negro)
+    image_result = detectar_esquinas_caja(imagen_sobel, imagen, mascara_carton)
 
-    # Concatenamos horizontalmente (hconcat)
-    imagen_combinada = cv2.hconcat([imagen_sobel_color, image_result])
+    # 4. Concatenamos:
+    # IZQUIERDA: Imagen Original (imagen)
+    # DERECHA: Imagen Procesada (image_result)
+    imagen_combinada = cv2.hconcat([imagen, image_result])
 
-    # Mostrar ventana
-    cv2.namedWindow("Panel de Control", cv2.WINDOW_AUTOSIZE)
-    cv2.imshow("Panel de Control", imagen_combinada)
+    cv2.namedWindow("Izq: Original | Der: Procesada (Solo Caja)", cv2.WINDOW_AUTOSIZE)
+    cv2.imshow("Izq: Original | Der: Procesada (Solo Caja)", imagen_combinada)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
