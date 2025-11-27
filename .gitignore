@@ -363,3 +363,7 @@ MigrationBackup/
 FodyWeavers.xsd
 
 runs/
+src/yolov8l-world.pt
+src/yolov8s-world.pt
+src/Clothing_Detection_YOLO
+src/Clothing_Detection_YOLO
