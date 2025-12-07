@@ -363,3 +363,39 @@ MigrationBackup/
 FodyWeavers.xsd
 
 runs/
+
+# ===== YOLO & Python Project Files =====
+# Modelos YOLO (archivos grandes, se pueden descargar)
+*.pt
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Entornos virtuales
+venv/
+env/
+ENV/
+.venv
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
