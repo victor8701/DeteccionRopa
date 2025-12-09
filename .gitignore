@@ -363,10 +363,16 @@ MigrationBackup/
 FodyWeavers.xsd
 
 runs/
+# Permitir pesos del modelo entrenado
+!src/runs/detect/train/weights/best.pt
+!src/runs/detect/train/weights/last.pt
 
 # ===== YOLO & Python Project Files =====
 # Modelos YOLO (archivos grandes, se pueden descargar)
 *.pt
+# Permitir pesos del modelo entrenado (excepción a *.pt)
+!src/runs/detect/train/weights/best.pt
+!src/runs/detect/train/weights/last.pt
 
 # Python
 __pycache__/
