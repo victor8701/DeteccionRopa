@@ -25,10 +25,10 @@ MOSTRAR_VENTANA_ESQUINAS = True  # True: Muestra ventana con esquinas detectadas
                                   # False: No muestra ventana
 
 # --- GUARDADO DE ARCHIVOS ---
-GUARDAR_IMAGENES_YOLO = True  # True: Guarda imágenes en runs/detect/predictX/
+GUARDAR_IMAGENES_YOLO = False  # True: Guarda imágenes en runs/detect/predictX/
                               # False: No guarda imágenes
 
-GUARDAR_REPORTE_COMPLETO = True  # True: Guarda reporte unificado en resultados_deteccion/
+GUARDAR_REPORTE_COMPLETO = False  # True: Guarda reporte unificado en resultados_deteccion/
                                  # False: No guarda reporte
 
 # --- DETECCIÓN DE PRENDAS (YOLO) ---
