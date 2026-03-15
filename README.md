@@ -2,7 +2,11 @@
 
 **Sistema de detección de prendas y esquinas de contenedores usando YOLO y procesamiento de imagen.**
 
-Desarrollado como proyecto de la asignatura de Visión por Computador del Máster en Robótica y Automática (UC3M - 2024/2025).
+<div align="center">
+  <img src="assets/111.jpg" width="400" alt="Resultado Final">
+</div>
+
+Desarrollado como proyecto de la asignatura de Visión por Computador del Máster en Robótica y Automática (UC3M - 2025/2026).
 
 ---
 
@@ -31,6 +35,22 @@ Este sistema combina dos módulos de visión por computador:
 - **Clases detectadas:** 14 tipos de prendas
 - **Confianza mínima:** 50% (configurable)
 - **Modelo:** YOLO-World (vocabulario abierto)
+
+
+### Métricas de Rendimiento
+Para validar el sistema, se realizaron entrenamientos exhaustivos monitorizando la precisión y las pérdidas del modelo.
+
+#### Evolución de Pérdidas
+<img src="assets/grafico_perdidas.png" width="700">
+
+#### Matriz de Precisión-Recall
+<img src="assets/Precision_Recall.png" width="700">
+
+#### Métricas Generales
+<img src="assets/grafico_metricas.png" width="700">
+
+#### Curvas de Aprendizaje
+<img src="assets/Perdidas_Arendizaje.png" width="700">
 
 ---
 
@@ -111,6 +131,10 @@ Los archivos de modelos (`.pt`) **no están incluidos** debido a su tamaño. Se 
 6. **Exclusión YOLO** - Margen alrededor de prendas
 7. **Shi-Tomasi** - Detectar esquinas
 
+| Proceso de Esquinas | Ejemplo de Detección |
+|:---:|:---:|
+| <img src="assets/paso4_comparacion.jpg" width="500"> | <img src="assets/111.jpg" width="500"> |
+
 ---
 
 
@@ -118,13 +142,9 @@ Los archivos de modelos (`.pt`) **no están incluidos** debido a su tamaño. Se 
 
 ## 👥 Autor
 
-Víctor Martín Parra  
+Víctor Martín Parra
 Miguel Franco Martínez
 Daniel de Molina Aguado
 Máster en Robótica y Automática - Universidad Carlos III de Madrid (2024/2025)
 
 ---
-
-## 📄 Licencia
-
-Este proyecto es de código abierto para fines educativos.
